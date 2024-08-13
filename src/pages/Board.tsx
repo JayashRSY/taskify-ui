@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -24,17 +24,16 @@ import { updateTicket } from "../api/ticketApi";
 
 const Board: React.FC = () => {
   const dispatch = useDispatch();
-  const { tasks, columns } = useSelector((state: RootState) => state.board);
+  const { columns } = useSelector((state: RootState) => state.board);
 
+  const { filteredTasks, filteredColumns } = useSelector(
+    (state: RootState) => state.filter
+  );
   useEffect(() => {
     dispatch(fetchBoardsApi());
     // dispatch(fetchColumns());
     dispatch(fetchTasksApi());
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   tasks.forEach((task) => {});
-  // }, [tasks]);
 
   const onDragEnd = async (result: DropResult) => {
     try {
@@ -81,7 +80,7 @@ const Board: React.FC = () => {
           ...finishColumn,
           taskIds: finishTaskIds,
         };
-        const taskChanged: ITask = tasks?.filter(
+        const taskChanged: ITask = filteredTasks?.filter(
           (task: ITask) => task._id === draggableId
         )[0];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,7 +118,7 @@ const Board: React.FC = () => {
   };
 
   const getTaskById = (id: string): ITask | undefined =>
-    tasks?.find((task: ITask) => task._id === id);
+    filteredTasks?.find((task: ITask) => task._id === id);
 
   return (
     <>

@@ -35,7 +35,7 @@ const SignIn = () => {
           email: "",
           password: "",
         });
-        navigate("/");
+        navigate("/board");
       } else {
         toast.error(res.message);
       }

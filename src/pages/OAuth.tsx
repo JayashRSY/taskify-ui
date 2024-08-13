@@ -28,7 +28,7 @@ const OAuth = () => {
           toast.success(res.message);
           dispatch(setUser(res.data));
           localStorage.setItem("accessToken", res.accessToken);
-          navigate("/");
+          navigate("/board");
         } else {
           toast.error(res.message);
         }

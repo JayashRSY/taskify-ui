@@ -6,6 +6,7 @@ import authSlice from "../features/auth/authSlice";
 import layoutSlice from "../features/layout/layoutSlice";
 import boardSlice from "../features/board/boardSlice";
 import apiListenerMiddleware from "../middlewares/apiListener";
+import filterSlice from "../features/filter/filterSlice";
 
 // Define the persist configuration
 const persistConfig = {
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   layout: layoutSlice,
   board: boardSlice,
+  filter: filterSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

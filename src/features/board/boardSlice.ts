@@ -57,7 +57,6 @@ export const boardSlice = createSlice({
             }
         },
         updateMultipleColumns: (state, action: PayloadAction<{ startColumn: IColumn; finishColumn: IColumn }>) => {
-            console.log("🚀 ~ file: boardSlice.ts:80 ~ action:", action.payload);
             const { startColumn, finishColumn } = action.payload;
 
             const startIndex = state.columns.findIndex((col: IColumn) => col._id === startColumn._id);
@@ -71,7 +70,6 @@ export const boardSlice = createSlice({
             }
         },
         setTasks: (state, action: PayloadAction<any>) => {
-            console.log("🚀 ~ file: boardSlice.ts:74 ~ action:", action.payload);
             action.payload.forEach((task: ITask) => {
                 state.columns.forEach((col: any) => {
                     if (col.name.toLowerCase() === task.status.toLowerCase()) {

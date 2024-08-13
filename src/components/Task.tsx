@@ -43,11 +43,11 @@ const Task: React.FC<TaskProps> = ({ task }) => {
       <p className="mt-3">
         <span className="font-bold text-gray-700">Deadline: </span>
         {task.dueDate ? (
-          <p className="text-gray-700">No due date.</p>
-        ) : (
           <span className="text-gray-700">
             {toDDMMYYYY(new Date(task.dueDate))}
           </span>
+        ) : (
+          <span className="text-gray-700">No due date.</span>
         )}
       </p>
     </div>

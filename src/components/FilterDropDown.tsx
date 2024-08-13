@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef, RefObject } from "react";
 import * as Icons from "react-feather";
 
-function FilterDropdown() {
-  const [selected, setSelected] = useState("Filter");
+interface FilterDropdownProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selected: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setSelected: any;
+}
+const FilterDropdown: React.FC<FilterDropdownProps> = ({
+  options,
+  selected,
+  setSelected,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef: RefObject<HTMLDivElement> = useRef(null);
-
-  const options = ["Filter", "Option 1", "Option 2", "Option 3"];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -46,7 +55,7 @@ function FilterDropdown() {
           aria-labelledby="options-menu"
         >
           <div className="py-1">
-            {options.map((option) => (
+            {options.map((option: any) => (
               <button
                 key={option}
                 onClick={() => {
@@ -64,6 +73,6 @@ function FilterDropdown() {
       )}
     </div>
   );
-}
+};
 
 export default FilterDropdown;

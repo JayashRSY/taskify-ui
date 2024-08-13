@@ -28,7 +28,7 @@ const SignUp = () => {
           email: "",
           password: "",
         });
-        navigate("/");
+        navigate("/signin");
       } else {
         toast.error(res.message);
       }

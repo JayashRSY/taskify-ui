@@ -35,6 +35,14 @@ const StatusBox = () => {
   }, [tasks]);
   return (
     <div>
+      <button
+        onClick={openModal}
+        className="flex font-bold bg-purple-950 hover:bg-purple-900 text-white p-5 my-5 rounded-[10px] w-full justify-center"
+      >
+        <Icon.Plus />
+        Add Task
+      </button>
+      <TicketForm isOpen={isFormOpen} onClose={closeModal} />
       <div className="bg-gray-100 p-5 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-5">
         <WarningIcon />
         <p className="font-bold text-md text-gray-500 py-5">Expired Tasks</p>
@@ -52,14 +60,6 @@ const StatusBox = () => {
           {completedTasks?.length || 0}/{tasks.length}
         </p>
       </div>
-      <button
-        onClick={openModal}
-        className="flex font-bold bg-purple-950 hover:bg-purple-900 text-white p-5 rounded-full w-full justify-center"
-      >
-        <Icon.Plus />
-        Add Task
-      </button>
-      <TicketForm isOpen={isFormOpen} onClose={closeModal} />
     </div>
   );
 };
