@@ -10,8 +10,8 @@ import { ITask } from "../interfaces/ITask";
 
 const StatusBox = () => {
   const { tasks } = useSelector((state: RootState) => state.board);
-  const [expiredTasks, setExpiredTasks] = useState();
-  const [completedTasks, setCompletedTasks] = useState();
+  const [expiredTasks, setExpiredTasks] = useState<ITask[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const openModal = () => setIsFormOpen(true);
   const closeModal = () => setIsFormOpen(false);
@@ -19,7 +19,7 @@ const StatusBox = () => {
   useEffect(() => {
     setExpiredTasks(
       tasks.filter((task: ITask) => {
-        const date = new Date(task.dueDate);
+        const date = new Date(task.dueDate ?? "");
         const today = new Date();
         return date < today;
       })
@@ -29,10 +29,8 @@ const StatusBox = () => {
         return task.status.toLowerCase() === "done";
       })
     );
-
-    console.log(expiredTasks);
-    console.log(completedTasks);
   }, [tasks]);
+
   return (
     <div>
       <button

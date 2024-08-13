@@ -3,6 +3,7 @@ import { createListenerMiddleware } from '@reduxjs/toolkit';
 import {
     createTaskApi,
     addTask,
+    // updateTask,
     fetchBoardsApi,
     fetchColumnsApi,
     fetchTasksApi,
@@ -39,7 +40,7 @@ apiListenerMiddleware.startListening({
     effect: async (action, listenerApi) => {
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const res: any = await updateTicket(action.payload._id, action.payload.payload);
+            const res: any = await updateTicket(action.payload._id || '', action.payload);
             if (res.success) {
                 listenerApi.dispatch(addTask(res.data));
                 toast.success(res.message)

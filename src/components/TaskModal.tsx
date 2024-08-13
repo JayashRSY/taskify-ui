@@ -31,9 +31,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
           </div> */}
 
           <div className="mb-4">
-            <p className="text-textPrimary">
-              {task.description}
-            </p>
+            <p className="text-textPrimary">{task.description}</p>
             <p className="text-textPrimary">
               <span className="font-medium">Due Date:</span> {task.dueDate}
             </p>
@@ -76,7 +74,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
             </p>
             <p className="text-textPrimary">
               <span className="font-medium">Labels:</span>{" "}
-              {task.labels.join(", ")}
+              {task?.labels?.join(", ")}
             </p>
           </div>
 

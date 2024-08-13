@@ -2,7 +2,7 @@ export interface ITask {
     _id?: string;
     title: string;
     description?: string;
-    status: "to-do" | "in-progress" | "done";
+    status: string;
     priority: "low" | "medium" | "high";
     dueDate?: string;
     labels?: string[];

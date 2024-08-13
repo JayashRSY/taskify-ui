@@ -45,7 +45,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ isOpen, task, onClose }) => {
     if (task) {
       dispatch(updateTaskApi({ ...form, _id: task._id }));
     } else {
-      dispatch(createTaskApi(form));
+      dispatch(createTaskApi(form as ITask));
     }
     onClose();
   };

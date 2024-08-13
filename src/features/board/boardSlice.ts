@@ -3,8 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { IColumn } from '../../interfaces/IColumn';
 import { ITask } from '../../interfaces/ITask';
-import { toLowerCase } from '../../utils/stringCase';
-
 export interface BoardState {
     boards: any;
     columns: any;
@@ -37,13 +35,25 @@ export const boardSlice = createSlice({
     name: 'board',
     initialState,
     reducers: {
-        fetchColumnsApi: (state) => { },
-        fetchTasksApi: (state) => { },
-        fetchBoardsApi: (state) => { },
-        createTaskApi: (state, action: PayloadAction<ITask>) => { },
+        fetchColumnsApi: (state) => {
+            console.log(state);
+        },
+        fetchTasksApi: (state) => {
+            console.log(state);
+        },
+        fetchBoardsApi: (state) => {
+            console.log(state);
+        },
+        createTaskApi: (state, action: PayloadAction<ITask>) => {
+            console.log(state, action);
+        },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        updateTaskApi: (state, action: PayloadAction<any>) => { },
-        createBoardApi: (state) => { },
+        updateTaskApi: (state, action: PayloadAction<ITask>) => {
+            console.log(state, action);
+        },
+        createBoardApi: (state) => {
+            console.log(state);
+        },
         setBoards: (state, action: PayloadAction<any>) => {
             state.boards = action.payload
         },
@@ -84,7 +94,12 @@ export const boardSlice = createSlice({
             state.tasks = action.payload
         },
         addTask: (state, action: PayloadAction<ITask>) => {
-            if (!state.tasks.includes(action.payload)) {
+            const index = state.tasks.findIndex((task: ITask) => task._id === action.payload._id);
+            if (index !== -1) {
+                // Update existing task
+                state.tasks[index] = action.payload;
+            } else {
+                // Add new task
                 state.tasks.push(action.payload);
             }
             state.columns.forEach((col: any) => {
@@ -96,16 +111,8 @@ export const boardSlice = createSlice({
                     col.taskIds = col.taskIds.filter((id: string) => id !== action.payload._id);
                 }
             });
-            // Assuming the first column is at index 0
-            // if (state.columns.length > 0) {
-            //     const firstColumnId = state.columns[0]._id;
-            //     const firstColumn = state.columns.find((col: IColumn) => col._id === firstColumnId);
-
-            //     if (firstColumn) {
-            //         firstColumn.taskIds.push(action.payload._id); // Assuming tasks are referenced by their IDs
-            //     }
-            // }
         },
+
     },
 })
 

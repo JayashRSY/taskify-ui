@@ -55,7 +55,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           aria-labelledby="options-menu"
         >
           <div className="py-1">
-            {options.map((option: any) => (
+            {options.map((option: string) => (
               <button
                 key={option}
                 onClick={() => {

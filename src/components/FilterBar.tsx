@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import * as Icon from "react-feather";
 import FilterDropdown from "./FilterDropDown";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +10,8 @@ import { ITask } from "../interfaces/ITask";
 const FilterBar = () => {
   const dispatch = useDispatch();
   const { tasks } = useSelector((state: RootState) => state.board);
-  const filterOptions = ["All", "High", "Medium", "Low"];
+
+  const filterOptions = useMemo(() => ["All", "High", "Medium", "Low"], []);
   const [selected, setSelected] = useState("All");
   const [searchText, setSearchText] = useState("");
 
@@ -32,7 +34,8 @@ const FilterBar = () => {
         })
       )
     );
-  }, [dispatch, tasks, searchText, selected]);
+    console.log("🚀 ~ file: FilterBar.tsx:36 ~ tasks:", tasks);
+  }, [dispatch, tasks, searchText, selected, filterOptions]);
 
   return (
     <div>

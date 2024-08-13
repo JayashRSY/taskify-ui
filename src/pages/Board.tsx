@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -13,7 +13,7 @@ import { RootState } from "../app/store";
 import { IColumn } from "../interfaces/IColumn";
 import { useDispatch } from "react-redux";
 import {
-  fetchBoardsApi,
+  // fetchBoardsApi,
   fetchTasksApi,
   updateColumn,
   updateMultipleColumns,
@@ -24,16 +24,15 @@ import { updateTicket } from "../api/ticketApi";
 
 const Board: React.FC = () => {
   const dispatch = useDispatch();
-  const { columns } = useSelector((state: RootState) => state.board);
+  const { tasks, columns } = useSelector((state: RootState) => state.board);
 
-  const { filteredTasks, filteredColumns } = useSelector(
-    (state: RootState) => state.filter
-  );
+  const { filteredTasks } = useSelector((state: RootState) => state.filter);
   useEffect(() => {
-    dispatch(fetchBoardsApi());
+    // dispatch(fetchBoardsApi());
     // dispatch(fetchColumns());
     dispatch(fetchTasksApi());
   }, [dispatch]);
+  useEffect(() => {}, [tasks]);
 
   const onDragEnd = async (result: DropResult) => {
     try {
@@ -80,21 +79,21 @@ const Board: React.FC = () => {
           ...finishColumn,
           taskIds: finishTaskIds,
         };
-        const taskChanged: ITask = filteredTasks?.filter(
+        const taskChanged: ITask | undefined = filteredTasks?.find(
           (task: ITask) => task._id === draggableId
-        )[0];
+        );
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const taskDestination: any = columns?.filter(
+        const taskDestination: any = columns?.find(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (col: any) => col._id === destination.droppableId
-        )[0];
+        );
         // dispatch(
         //   updateTaskApi({
         //     _id: taskChanged._id,
         //     payload: { status: taskDestination.name },
         //   })
         // );
-        if (taskChanged._id) {
+        if (taskChanged?._id) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const res: any = await updateTicket(taskChanged._id, {
             status: taskDestination.name,
@@ -175,7 +174,7 @@ const Board: React.FC = () => {
                             return task ? (
                               <Draggable
                                 key={task._id}
-                                draggableId={task._id}
+                                draggableId={task._id ?? ""}
                                 index={index}
                               >
                                 {(provided) => (
