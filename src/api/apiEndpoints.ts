@@ -10,8 +10,21 @@ export const API_ENDPOINTS = {
     UPDATE_USER: '/user/updateUser',
     DELETE_USER: '/user/deleteUser',
 
-    GET_TICKETS: '/user/getTicket',
-    GET_TICKET: '/user/getTicket',
-    UPDATE_TICKET: '/user/updateTicket',
-    DELETE_TICKET: '/user/deleteTicket',
+    CREATE_TICKET: '/ticket/createTicket',
+    GET_TICKETS: '/ticket/getTickets',
+    GET_TICKET: '/ticket/getTicket',
+    UPDATE_TICKET: '/ticket/updateTicket',
+    DELETE_TICKET: '/ticket/deleteTicket',
+
+    CREATE_COLUMN: '/ticket/createColumn',
+    GET_COLUMNS: '/column/getColumn',
+    GET_COLUMN: '/column/getColumn',
+    UPDATE_COLUMN: '/column/updateColumn',
+    DELETE_COLUMN: '/column/deleteColumn',
+
+    CREATE_BOARD: '/ticket/createBoard',
+    GET_BOARDS: '/board/getBoard',
+    GET_BOARD: '/board/getBoard',
+    UPDATE_BOARD: '/board/updateBoard',
+    DELETE_BOARD: '/board/deleteBoard',
 };

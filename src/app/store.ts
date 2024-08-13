@@ -4,6 +4,8 @@ import storage from 'redux-persist/lib/storage'; // Default storage (localStorag
 import counterReducer from '../features/counter/counterSlice';
 import authSlice from "../features/auth/authSlice";
 import layoutSlice from "../features/layout/layoutSlice";
+import boardSlice from "../features/board/boardSlice";
+import apiListenerMiddleware from "../middlewares/apiListener";
 
 // Define the persist configuration
 const persistConfig = {
@@ -13,9 +15,10 @@ const persistConfig = {
 
 // Combine reducers into a root reducer
 const rootReducer = combineReducers({
+  counter: counterReducer,
   auth: authSlice,
   layout: layoutSlice,
-  counter: counterReducer,
+  board: boardSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -23,6 +26,8 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 // Configure the store
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(apiListenerMiddleware.middleware),
 });
 
 // Create a persistor instance

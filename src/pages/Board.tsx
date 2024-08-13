@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -7,103 +7,119 @@ import {
 } from "react-beautiful-dnd";
 import FilterBar from "../components/FilterBar";
 import StatusBox from "../components/StatusBox";
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-}
-
-interface Column {
-  id: string;
-  name: string;
-  taskIds: string[];
-}
+import Task from "../components/Task";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { IColumn } from "../interfaces/IColumn";
+import { useDispatch } from "react-redux";
+import {
+  fetchBoardsApi,
+  fetchTasksApi,
+  updateColumn,
+  updateMultipleColumns,
+} from "../features/board/boardSlice";
+import { ITask } from "../interfaces/ITask";
+import { toast } from "react-toastify";
+import { updateTicket } from "../api/ticketApi";
 
 const Board: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: "task-1", title: "Task 1", description: "Task 1 Description" },
-    { id: "task-2", title: "Task 2", description: "Task 2 Description" },
-    { id: "task-3", title: "Task 3", description: "Task 3 Description" },
-  ]);
+  const dispatch = useDispatch();
+  const { tasks, columns } = useSelector((state: RootState) => state.board);
 
-  const [columns, setColumns] = useState<Column[]>([
-    {
-      id: "column-1",
-      name: "To Do",
-      taskIds: ["task-1", "task-2"],
-    },
-    {
-      id: "column-2",
-      name: "In Progress",
-      taskIds: ["task-3"],
-    },
-    {
-      id: "column-3",
-      name: "Done",
-      taskIds: [],
-    },
-  ]);
+  useEffect(() => {
+    dispatch(fetchBoardsApi());
+    // dispatch(fetchColumns());
+    dispatch(fetchTasksApi());
+  }, [dispatch]);
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+  // useEffect(() => {
+  //   tasks.forEach((task) => {});
+  // }, [tasks]);
 
-    if (!destination) return;
+  const onDragEnd = async (result: DropResult) => {
+    try {
+      const { destination, source, draggableId } = result;
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
+      if (!destination) return;
 
-    const startColumn = columns.find((col) => col.id === source.droppableId)!;
-    const finishColumn = columns.find(
-      (col) => col.id === destination.droppableId
-    )!;
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
 
-    if (startColumn === finishColumn) {
-      const newTaskIds = Array.from(startColumn.taskIds);
-      newTaskIds.splice(source.index, 1);
-      newTaskIds.splice(destination.index, 0, draggableId);
+      const startColumn = columns.find(
+        (col: IColumn) => col._id === source.droppableId
+      )!;
+      const finishColumn = columns.find(
+        (col: IColumn) => col._id === destination.droppableId
+      )!;
 
-      const newColumn: Column = {
-        ...startColumn,
-        taskIds: newTaskIds,
-      };
+      if (startColumn === finishColumn) {
+        const newTaskIds = Array.from(startColumn.taskIds);
+        newTaskIds.splice(source.index, 1);
+        newTaskIds.splice(destination.index, 0, draggableId);
 
-      setColumns((prev) =>
-        prev.map((col) => (col.id === newColumn.id ? newColumn : col))
-      );
-    } else {
-      const startTaskIds = Array.from(startColumn.taskIds);
-      startTaskIds.splice(source.index, 1);
-      const newStartColumn: Column = {
-        ...startColumn,
-        taskIds: startTaskIds,
-      };
+        const newColumn: IColumn = {
+          ...startColumn,
+          taskIds: newTaskIds,
+        };
 
-      const finishTaskIds = Array.from(finishColumn.taskIds);
-      finishTaskIds.splice(destination.index, 0, draggableId);
-      const newFinishColumn: Column = {
-        ...finishColumn,
-        taskIds: finishTaskIds,
-      };
+        dispatch(updateColumn(newColumn));
+      } else {
+        const startTaskIds = Array.from(startColumn.taskIds);
+        startTaskIds.splice(source.index, 1);
+        const newStartColumn: IColumn = {
+          ...startColumn,
+          taskIds: startTaskIds,
+        };
 
-      setColumns((prev) =>
-        prev.map((col) =>
-          col.id === newStartColumn.id
-            ? newStartColumn
-            : col.id === newFinishColumn.id
-            ? newFinishColumn
-            : col
-        )
-      );
+        const finishTaskIds = Array.from(finishColumn.taskIds);
+        finishTaskIds.splice(destination.index, 0, draggableId);
+        const newFinishColumn: IColumn = {
+          ...finishColumn,
+          taskIds: finishTaskIds,
+        };
+        const taskChanged: ITask = tasks?.filter(
+          (task: ITask) => task._id === draggableId
+        )[0];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const taskDestination: any = columns?.filter(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (col: any) => col._id === destination.droppableId
+        )[0];
+        // dispatch(
+        //   updateTaskApi({
+        //     _id: taskChanged._id,
+        //     payload: { status: taskDestination.name },
+        //   })
+        // );
+        if (taskChanged._id) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const res: any = await updateTicket(taskChanged._id, {
+            status: taskDestination.name,
+          } as ITask);
+          if (res.success) {
+            dispatch(
+              updateMultipleColumns({
+                startColumn: newStartColumn,
+                finishColumn: newFinishColumn,
+              })
+            );
+          } else {
+            toast.error(res.message);
+          }
+        }
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
-  const getTaskById = (id: string): Task | undefined =>
-    tasks.find((task) => task.id === id);
+  const getTaskById = (id: string): ITask | undefined =>
+    tasks?.find((task: ITask) => task._id === id);
 
   return (
     <>
@@ -116,10 +132,10 @@ const Board: React.FC = () => {
           <div className="flex-1 justify-center p-5 rounded-lg">
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="flex">
-                {columns.map((column) => (
+                {columns?.map((column: IColumn) => (
                   <div
-                    key={column.id}
-                    className="flex-1 justify-center bg-gray-200 p-5 m-5 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+                    key={column._id}
+                    className="flex-1 justify-center bg-gray-100 p-5 m-5 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
                   >
                     <h2
                       className={`font-bold pb-2 border-b-4 flex align-middle justify-center items-center  ${
@@ -144,23 +160,23 @@ const Board: React.FC = () => {
                         }`}
                       ></span>
                       {column.name}
-                      <span className=" flex justify-center align-middle rounded-full bg-gray-300 px-2 mx-2">
+                      <span className=" flex justify-center align-middle rounded-full bg-gray-300 text-gray-700 px-2 mx-2">
                         {column.taskIds.length}
                       </span>
                     </h2>
-                    <Droppable droppableId={column.id}>
+                    <Droppable droppableId={column._id}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                           className="py-2"
                         >
-                          {column.taskIds.map((taskId, index) => {
+                          {column?.taskIds?.map((taskId, index) => {
                             const task = getTaskById(taskId);
                             return task ? (
                               <Draggable
-                                key={task.id}
-                                draggableId={task.id}
+                                key={task._id}
+                                draggableId={task._id}
                                 index={index}
                               >
                                 {(provided) => (
@@ -168,10 +184,8 @@ const Board: React.FC = () => {
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className="bg-white p-3 mb-3 rounded shadow"
                                   >
-                                    <h3 className="font-bold">{task.title}</h3>
-                                    <p>{task.description}</p>
+                                    <Task task={task} />
                                   </div>
                                 )}
                               </Draggable>
