@@ -39,9 +39,9 @@ const ProfileButton = () => {
     try {
       const res: ISignoutResponse = await signout();
       if (res.success) {
-          dispatch(setUser(undefined));
-          localStorage.removeItem("accessToken");
-          window.location.reload();
+        dispatch(setUser(undefined));
+        localStorage.removeItem("accessToken");
+        window.location.reload();
         //   toast.success(res.message);
       } else {
         toast.error(res.message);
