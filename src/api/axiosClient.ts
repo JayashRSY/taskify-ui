@@ -5,7 +5,8 @@ import { store } from '../app/store';
 import { setLoader } from '../features/layout/layoutSlice';
 
 let isRefreshing = false;
-let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: unknown) => void }[] = [];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void }[] = [];
 
 const processQueue = (error: AxiosError | null, token: string | null = null) => {
     failedQueue.forEach(prom => {
@@ -52,7 +53,8 @@ axiosClient.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (originalRequest && error.response?.status === 401 && !(originalRequest as any)._retry) {
             if (isRefreshing) {
                 try {
                     const token = await new Promise<string>((resolve, reject) => {
@@ -65,7 +67,8 @@ axiosClient.interceptors.response.use(
                 }
             }
 
-            originalRequest._retry = true;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (originalRequest as any)._retry = true;
             isRefreshing = true;
 
             try {
@@ -88,10 +91,10 @@ axiosClient.interceptors.response.use(
         store.dispatch(setLoader(false));
 
         // Handle other status codes
-        if (error.response?.status === 403) {
+        if (error && error.response?.status === 403) {
             // Handle 403 Forbidden
             window.location.href = '/forbidden'; // Example: Redirect to forbidden page
-        } else if (error.response?.status >= 500) {
+        } else if (error && error.response?.status && error.response?.status >= 500) {
             // Handle 500+ Server errors
             console.error('Server error:', error.response.status);
         }

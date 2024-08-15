@@ -56,6 +56,7 @@ apiListenerMiddleware.startListening({
 apiListenerMiddleware.startListening({
     actionCreator: fetchTasksApi,
     effect: async (action, listenerApi) => {
+        console.log("🚀 ~ file: apiListener.ts:59 ~ action:", action);
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const res: any = await getTickets();
@@ -73,6 +74,7 @@ apiListenerMiddleware.startListening({
 apiListenerMiddleware.startListening({
     actionCreator: fetchColumnsApi,
     effect: async (action, listenerApi) => {
+        console.log("🚀 ~ file: apiListener.ts:77 ~ action:", action);
         try {
             const tasks = await getTickets();
             listenerApi.dispatch(setColumns(tasks));
@@ -85,6 +87,7 @@ apiListenerMiddleware.startListening({
 apiListenerMiddleware.startListening({
     actionCreator: fetchBoardsApi,
     effect: async (action, listenerApi) => {
+        console.log("🚀 ~ file: apiListener.ts:90 ~ action:", action);
         try {
             const tasks = await getTickets();
             listenerApi.dispatch(setBoards(tasks));
