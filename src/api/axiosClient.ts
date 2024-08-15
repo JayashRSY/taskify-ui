@@ -21,7 +21,7 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
 
 // Create an instance of Axios
 const axiosClient: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:3000/api', // Replace with your API base URL
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 10000, // Set a timeout if needed
     headers: {
         'Content-Type': 'application/json',
